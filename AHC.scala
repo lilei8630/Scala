@@ -69,6 +69,7 @@ object AHC {
     querys.map(x=>(x._2,x._2)).foreach(x=>{groups+=x})
 
     val simMap = collection.mutable.Map[String, Double]()
+    val simMap_Test = collection.mutable.Map[String, Double]()
     querys.foreach(x=>{
       val query1 = x._1
       val index1 = x._2
@@ -78,8 +79,10 @@ object AHC {
         if(index1 < index2){
           val sim = similarity(query1,query2)
           simMap += (index1+"#"+index2 -> sim)
+          simMap_Test += (query1+"#"+query2->sim)
         }})})
     var sortedList = simMap.toList.sortBy(_._2)
+    val sortedList_Test = simMap_Test.toList.sortBy(_._2)
 
     //下面应该有一个while循环
     var sim:Double = 1.0
@@ -89,7 +92,7 @@ object AHC {
     var group1 = -1 ;
     var group2 = -1 ;
 
-    while(!sortedList.isEmpty&&sortedList.head._2<0.9){
+    while(!sortedList.isEmpty&&sortedList.head._2<0.8){
       index1 = sortedList.head._1.split("#")(0).toInt
       index2 = sortedList.head._1.split("#")(1).toInt
       sortedList = sortedList.drop(1)
@@ -104,10 +107,14 @@ object AHC {
         }
       }
     }
+    //--------------print result----------------
+
+    sortedList_Test.foreach(x=>println(x))
+
+    println("----------------------------")
 
     for((index,group)<-groups){
       println(querysMap(index)+" "+group)
     }
   }
-
 }
